@@ -53,104 +53,49 @@ int main() {
     Shader defaultShader("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vert.glsl",
                          "/Users/rahul/Desktop/repo/openGlGettingStarted/src/frag.glsl");
 
-    // yellow triangle shader:
-    Shader yellow("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vert.glsl",
-                  "/Users/rahul/Desktop/repo/openGlGettingStarted/src/yellowFrag.glsl");
-
-    Shader uniform("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vert.glsl",
-                  "/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformColourFrag.glsl");
-
-    Shader multiColorCorners("/Users/rahul/Desktop/repo/openGlGettingStarted/src/multiColorVert.glsl",
-                   "/Users/rahul/Desktop/repo/openGlGettingStarted/src/multiColorCornersFrag.glsl");
-
-    Shader upsideDown("/Users/rahul/Desktop/repo/openGlGettingStarted/src/upsideDownVert.glsl",
-                      "/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformColourFrag.glsl");
-
-    Shader upsideDownAndHorizontalUniformOffset("/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformHorizontalOffsetVert.glsl",
-                      "/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformColourFrag.glsl");
-
-    Shader vertPosToFragColour("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vertPosOutForFrag.glsl",
-                      "/Users/rahul/Desktop/repo/openGlGettingStarted/src/vec3InFragForColour.glsl");
-
     // vertices:
-    // basic triangle
-//    float vertices[] = {
-//            -0.5f, -0.5f, 0.0f, // left
-//            0.5f, -0.5f, 0.0f, // right
-//            0.0f,  0.5f, 0.0f  // top
-//    };
-    // rectangle
-   /* float vertices[] = {
-            0.5f,  0.5f, 0.0f,  // top right
-            0.5f, -0.5f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f   // top left
+    float vertices[] = {
+            // positions          // colors           // texture coords
+            0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+            0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left
     };
-    unsigned int indices[] = {  // note that we start from 0!
-            0, 1, 3,   // first triangle
-            1, 2, 3    // second triangle
-    };*/
-   // 2 triangles
-  /* float vertices[] = {
-           // triangle 1
-           -1.0f, -0.5f, 0.0f, // left
-           0.0f, -0.5f, 0.0f, // right
-           -0.5f,  0.5f, 0.0f, // top
 
-           // triangle 2
-           0.0f, -0.5f, 0.0f, // left
-           1.0f, -0.5f, 0.0f, // right
-           0.5f,  0.5f, 0.0f  // top
-   };*/
-    float vertices1[] = {
-            // triangle 1
-            -1.0f, -0.5f, 0.0f, // left
-            0.0f, -0.5f, 0.0f, // right
-            -0.5f,  0.5f, 0.0f, // top
+    unsigned int indices[] = {
+            0, 1, 2, // first triangle
+            2, 3, 0  // second triangle
     };
-    float vertices2[] = {
-            // triangle 2
-            // positions                      // colors
-            0.0f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // left
-            1.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // right
-            0.5f, 0.5f,0.0f, 0.0f, 0.0f, 1.0f // top
-    };
+
 
     // VAO
-    unsigned int vao[2];
-    unsigned int vbo[2];
+    unsigned int vao;
+    unsigned int vbo;
+    unsigned int ebo;
 
-    glGenVertexArrays(2, vao);
-    glGenBuffers(2, vbo);
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
 
-    // vao 1
-    glBindVertexArray(vao[0]);
+    // vao
+    glBindVertexArray(vao);
 
-    // VBO1
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+    // vbo
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-
-    // vao 2
-    glBindVertexArray(vao[1]);
-
-    // VBO2
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3* sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5* sizeof(float)));
+    glEnableVertexAttribArray(2);
+
     // EBO
-    /*unsigned int EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);*/
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // render loop
     while(!glfwWindowShouldClose(window))
@@ -166,37 +111,19 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // draw the first triangle
-        //defaultShader.use();
-        float timeValue = glfwGetTime();
-        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-        int vertexColorLocation = glGetUniformLocation(upsideDownAndHorizontalUniformOffset.ID, "ourColor");
-        float offset = 0.25f;
-        int offsetLocation = glGetUniformLocation(upsideDownAndHorizontalUniformOffset.ID, "offset");
+        defaultShader.use();
 
-        vertPosToFragColour.use();
-        glUniform1f(offsetLocation, offset);
-
-        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-        glBindVertexArray(vao[0]); // bind the VAO1
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        // draw the second triangle
-        multiColorCorners.use();
-        glBindVertexArray(vao[1]); // bind the VAO2
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        /*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);*/
+        glBindVertexArray(vao);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // poll all events and swap buffers
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
 
-    glDeleteBuffers(2, vbo);
-    //glDeleteBuffers(1, &EBO);
-    glDeleteVertexArrays(2, vao);
+    glDeleteBuffers(1, &ebo);
+    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &vao);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
