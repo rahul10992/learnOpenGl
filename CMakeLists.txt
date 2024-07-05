@@ -6,7 +6,10 @@ find_package(GLFW3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 
-add_executable(hello_window src/config.h src/main.cpp src/glad.c)
+add_executable(hello_window src/config.h src/main.cpp src/glad.c
+        src/Shader.cpp
+        src/Shader.h
+        src/ShaderType.h)
 
 target_include_directories(hello_window PRIVATE dependencies)
 

@@ -1,5 +1,6 @@
 #include "config.h"
 #include "cstring"
+#include "Shader.h"
 // https://www.youtube.com/watch?v=4m9RHfdUU_M
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -10,28 +11,6 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-// vertex shader string
-const char *vertexShaderSource = "#version 330 core\n"
-                                 "layout (location = 0) in vec3 aPos;\n"
-                                 "void main()\n"
-                                 "{\n"
-                                 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                                 "}\0";
-
-// fragment shader string:
-const char *fragmentShader1Source = "#version 330 core\n"
-                                 "out vec4 FragColor;\n"
-                                 "void main()\n"
-                                 "{\n"
-                                 "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                                 "}\0";
-
-const char *fragmentShader2Source = "#version 330 core\n"
-                                    "out vec4 FragColor;\n"
-                                    "void main()\n"
-                                    "{\n"
-                                    "   FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
-                                    "}\0";
 GLenum wireframe = GL_FILL;
 int main() {
     // glfw: initialize and configure
@@ -67,79 +46,18 @@ int main() {
         return -1;
     }
 
+    int nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+
     // build shader program
 
-    // vertex shader
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
+    Shader defaultShader("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vert.glsl",
+                         "/Users/rahul/Desktop/repo/openGlGettingStarted/src/frag.glsl");
 
-    // validate shader
-    int success;
-    char errorLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, errorLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << errorLog << std::endl;
-    }
-
-    // fragment shader:
-    unsigned int fragmentShader[2];
-    fragmentShader[0] = glCreateShader(GL_FRAGMENT_SHADER);
-    fragmentShader[1] = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader[0], 1, &fragmentShader1Source, NULL);
-    glShaderSource(fragmentShader[1], 1, &fragmentShader2Source, NULL);
-    glCompileShader(fragmentShader[0]);
-
-    // validate shader
-    success = 0;
-    //memset(errorLog, 0, sizeof(errorLog));
-    glGetShaderiv(fragmentShader[0], GL_COMPILE_STATUS, &success);
-    if(!success)
-    {
-        glGetShaderInfoLog(fragmentShader[0], 512, NULL, errorLog);
-        std::cout << "ERROR::SHADER::FRAGMENT[0]::COMPILATION_FAILED\n" << errorLog << std::endl;
-    }
-
-    glCompileShader(fragmentShader[1]);
-    glGetShaderiv(fragmentShader[1], GL_COMPILE_STATUS, &success);
-    if(!success)
-    {
-        glGetShaderInfoLog(fragmentShader[1], 512, NULL, errorLog);
-        std::cout << "ERROR::SHADER::FRAGMENT[1]::COMPILATION_FAILED\n" << errorLog << std::endl;
-    }
-
-    unsigned int shaderProgram[2];
-    shaderProgram[0] = glCreateProgram();
-    shaderProgram[1] = glCreateProgram();
-    glAttachShader(shaderProgram[0], vertexShader);
-    glAttachShader(shaderProgram[0], fragmentShader[0]);
-
-    glAttachShader(shaderProgram[1], vertexShader);
-    glAttachShader(shaderProgram[1], fragmentShader[1]);
-
-    glLinkProgram(shaderProgram[0]);
-    glGetProgramiv(shaderProgram[0], GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(shaderProgram[0], 512, NULL, errorLog);
-        std::cout << "ERROR::SHADER::LINKING PROGRAM::COMPILATION_FAILED\n" << errorLog << std::endl;
-    }
-
-
-    glLinkProgram(shaderProgram[1]);
-    glGetProgramiv(shaderProgram[1], GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(shaderProgram[1], 512, NULL, errorLog);
-        std::cout << "ERROR::SHADER::LINKING PROGRAM::COMPILATION_FAILED\n" << errorLog << std::endl;
-    }
-
-
-    // delete shaders after linking??
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader[0]);
-    glDeleteShader(fragmentShader[1]);
+    // yellow triangle shader:
+    Shader yellow("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vert.glsl",
+                  "/Users/rahul/Desktop/repo/openGlGettingStarted/src/yellowFrag.glsl");
 
     // vertices:
     // basic triangle
@@ -217,10 +135,11 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);*/
 
-
     // render loop
     while(!glfwWindowShouldClose(window))
     {
+        defaultShader.use();
+
         // wireframe mode or fill mode
         glPolygonMode(GL_FRONT_AND_BACK, wireframe);
 
@@ -231,13 +150,11 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-
         // draw the first triangle
-        glUseProgram(shaderProgram[0]);
         glBindVertexArray(vao[0]); // bind the VAO1
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glUseProgram(shaderProgram[1]);
+        yellow.use();
         glBindVertexArray(vao[1]); // bind the VAO2
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
