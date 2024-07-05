@@ -50,8 +50,6 @@ int main() {
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
-    // build shader program
-
     Shader defaultShader("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vert.glsl",
                          "/Users/rahul/Desktop/repo/openGlGettingStarted/src/frag.glsl");
 
@@ -70,6 +68,9 @@ int main() {
 
     Shader upsideDownAndHorizontalUniformOffset("/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformHorizontalOffsetVert.glsl",
                       "/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformColourFrag.glsl");
+
+    Shader vertPosToFragColour("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vertPosOutForFrag.glsl",
+                      "/Users/rahul/Desktop/repo/openGlGettingStarted/src/vec3InFragForColour.glsl");
 
     // vertices:
     // basic triangle
@@ -173,7 +174,7 @@ int main() {
         float offset = 0.25f;
         int offsetLocation = glGetUniformLocation(upsideDownAndHorizontalUniformOffset.ID, "offset");
 
-        upsideDownAndHorizontalUniformOffset.use();
+        vertPosToFragColour.use();
         glUniform1f(offsetLocation, offset);
 
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
