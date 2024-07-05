@@ -59,6 +59,9 @@ int main() {
     Shader yellow("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vert.glsl",
                   "/Users/rahul/Desktop/repo/openGlGettingStarted/src/yellowFrag.glsl");
 
+    Shader uniform("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vert.glsl",
+                  "/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformColourFrag.glsl");
+
     // vertices:
     // basic triangle
 //    float vertices[] = {
@@ -138,7 +141,6 @@ int main() {
     // render loop
     while(!glfwWindowShouldClose(window))
     {
-        defaultShader.use();
 
         // wireframe mode or fill mode
         glPolygonMode(GL_FRONT_AND_BACK, wireframe);
@@ -151,9 +153,17 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw the first triangle
+        //defaultShader.use();
+        float timeValue = glfwGetTime();
+        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+        int vertexColorLocation = glGetUniformLocation(uniform.ID, "ourColor");
+
+        uniform.use();
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
         glBindVertexArray(vao[0]); // bind the VAO1
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
+        // draw the second triangle
         yellow.use();
         glBindVertexArray(vao[1]); // bind the VAO2
         glDrawArrays(GL_TRIANGLES, 0, 3);
