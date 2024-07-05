@@ -62,6 +62,11 @@ int main() {
     Shader uniform("/Users/rahul/Desktop/repo/openGlGettingStarted/src/vert.glsl",
                   "/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformColourFrag.glsl");
 
+    Shader multiColorCorners("/Users/rahul/Desktop/repo/openGlGettingStarted/src/multiColorVert.glsl",
+                   "/Users/rahul/Desktop/repo/openGlGettingStarted/src/multiColorCornersFrag.glsl");
+
+    Shader upsideDown("/Users/rahul/Desktop/repo/openGlGettingStarted/src/upsideDownVert.glsl",
+                      "/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformColourFrag.glsl");
     // vertices:
     // basic triangle
 //    float vertices[] = {
@@ -100,9 +105,10 @@ int main() {
     };
     float vertices2[] = {
             // triangle 2
-            0.0f, -0.5f, 0.0f, // left
-            1.0f, -0.5f, 0.0f, // right
-            0.5f,  0.5f, 0.0f  // top
+            // positions                      // colors
+            0.0f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // left
+            1.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // right
+            0.5f, 0.5f,0.0f, 0.0f, 0.0f, 1.0f // top
     };
 
     // VAO
@@ -122,6 +128,7 @@ int main() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+
     // vao 2
     glBindVertexArray(vao[1]);
 
@@ -129,9 +136,11 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
     // EBO
     /*unsigned int EBO;
     glGenBuffers(1, &EBO);
@@ -156,15 +165,15 @@ int main() {
         //defaultShader.use();
         float timeValue = glfwGetTime();
         float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-        int vertexColorLocation = glGetUniformLocation(uniform.ID, "ourColor");
+        int vertexColorLocation = glGetUniformLocation(upsideDown.ID, "ourColor");
 
-        uniform.use();
+        upsideDown.use();
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
         glBindVertexArray(vao[0]); // bind the VAO1
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // draw the second triangle
-        yellow.use();
+        multiColorCorners.use();
         glBindVertexArray(vao[1]); // bind the VAO2
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
