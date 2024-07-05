@@ -67,6 +67,10 @@ int main() {
 
     Shader upsideDown("/Users/rahul/Desktop/repo/openGlGettingStarted/src/upsideDownVert.glsl",
                       "/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformColourFrag.glsl");
+
+    Shader upsideDownAndHorizontalUniformOffset("/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformHorizontalOffsetVert.glsl",
+                      "/Users/rahul/Desktop/repo/openGlGettingStarted/src/uniformColourFrag.glsl");
+
     // vertices:
     // basic triangle
 //    float vertices[] = {
@@ -165,9 +169,13 @@ int main() {
         //defaultShader.use();
         float timeValue = glfwGetTime();
         float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-        int vertexColorLocation = glGetUniformLocation(upsideDown.ID, "ourColor");
+        int vertexColorLocation = glGetUniformLocation(upsideDownAndHorizontalUniformOffset.ID, "ourColor");
+        float offset = 0.25f;
+        int offsetLocation = glGetUniformLocation(upsideDownAndHorizontalUniformOffset.ID, "offset");
 
-        upsideDown.use();
+        upsideDownAndHorizontalUniformOffset.use();
+        glUniform1f(offsetLocation, offset);
+
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
         glBindVertexArray(vao[0]); // bind the VAO1
         glDrawArrays(GL_TRIANGLES, 0, 3);
