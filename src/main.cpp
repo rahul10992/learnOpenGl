@@ -12,6 +12,8 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+float mixValue = 0.2f;
+
 GLenum wireframe = GL_FILL;
 int main() {
     // glfw: initialize and configure
@@ -59,10 +61,10 @@ int main() {
     // vertices:
     float vertices[] = {
             // positions          // colors           // texture coords
-            0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.55f, 0.55f,   // top right
-            0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.55f, 0.45f,   // bottom right
-            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.45f, 0.45f,   // bottom left
-            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.45f, 0.55f    // top left
+            0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.00f, 1.00f,   // top right
+            0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left
     };
 
     unsigned int indices[] = {
@@ -145,6 +147,7 @@ int main() {
     }
 
     stbi_image_free(dataNew);
+    textureShader.use();
 
     // render loop
     while(!glfwWindowShouldClose(window))
@@ -159,7 +162,7 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        textureShader.use();
+        glUniform1f(glGetUniformLocation(textureShader.ID, "mixValue"), mixValue);
         glUniform1i(glGetUniformLocation(textureShader.ID, "texture1"), 0); // set it manually
         textureShader.setInt("texture2", 1); // or with shader class
 
@@ -187,7 +190,13 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void processInput(GLFWwindow *window)
 {
-    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+        mixValue += 0.001f;
+    }
+    else if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+        mixValue -= 0.001f;
+    }
+    else if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
         if(wireframe == GL_LINE)
             wireframe = GL_FILL;
         else
